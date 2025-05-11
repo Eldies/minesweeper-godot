@@ -2,6 +2,9 @@ extends Button
 
 signal revealed
 
+var x: int
+var y: int
+
 var is_mine: bool = false
 var neighbor_mines_count: int = 0
 var is_revealed: bool = false

@@ -2,7 +2,7 @@ extends Node2D
 
 
 @export var grid_height: int = 10
-@export var grid_width: int = 5
+@export var grid_width: int = 10
 
 @export var mine_count: int = 10
 @onready var tile_scene = preload("res://tile.tscn")
@@ -25,6 +25,8 @@ func create_board():
 	for y in range(grid_height):
 		for x in range(grid_width):
 			var tile = tile_scene.instantiate()
+			tile.x = x
+			tile.y = y
 			grid.add_child(tile)
 			tile.connect("revealed", Callable(self, "_on_tile_revealed"))
 			tiles.append(tile)
@@ -61,6 +63,18 @@ func calculate_neighbors():
 				count += 1
 		tiles[i].neighbor_mines_count = count
 			
+			
+func reveal_neighbors(tile):
+	if tile.neighbor_mines_count > 0:
+		return
+	for neighbor in get_neighbor_list(tile.x, tile.y):
+		if not neighbor.is_revealed:
+			neighbor.reveal()
+			reveal_neighbors(neighbor)
+			
 func _on_tile_revealed(tile):
 	if tile.is_mine:
 		print("Game Over!")
+
+	reveal_neighbors(tile)
+			
