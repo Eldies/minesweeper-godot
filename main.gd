@@ -37,22 +37,28 @@ func place_mines():
 			mine_positions.append(i)
 			tiles[i].is_mine = true
 
+func get_neighbor_list(x: int, y: int):
+	var neighbors = []
+	for dx in range(-1, 2):
+		for dy in range(-1, 2):
+			if dx == 0 and dy == 0:
+				continue
+			var nx = x + dx
+			var ny = y + dy
+			if nx >= 0 and ny >= 0 and nx < grid_width and ny < grid_height:
+				var neighbor_index = ny * grid_width + nx
+				neighbors.append(tiles[neighbor_index])
+	return neighbors
+	
 func calculate_neighbors():
 	for i in range(tiles.size()):
 		var x = i % grid_width
 		var y = i / grid_width
 		var count = 0
-			
-		for dx in range(-1, 2):
-			for dy in range(-1, 2):
-				if dx == 0 and dy == 0:
-					continue
-				var nx = x + dx
-				var ny = y + dy
-				if nx >= 0 and ny >= 0 and nx < grid_width and ny < grid_height:
-					var neighbor_index = ny * grid_width + nx
-					if tiles[neighbor_index].is_mine:
-						count += 1
+		
+		for neighbor in get_neighbor_list(x, y):
+			if neighbor.is_mine:
+				count += 1
 		tiles[i].neighbor_mines_count = count
 			
 func _on_tile_revealed(tile):
