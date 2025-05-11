@@ -56,25 +56,20 @@ func calculate_neighbors():
 	for i in range(tiles.size()):
 		var x = i % grid_width
 		var y = i / grid_width
-		var count = 0
-		
-		for neighbor in get_neighbor_list(x, y):
-			if neighbor.is_mine:
-				count += 1
-		tiles[i].neighbor_mines_count = count
+		var neighbor_mines = get_neighbor_list(x, y).filter(func(nei): return nei.is_mine)
+		tiles[i].neighbor_mines_count = neighbor_mines.size()
 			
-			
-func reveal_neighbors(tile):
-	if tile.neighbor_mines_count > 0:
+func try_reveal_neighbors(tile):
+	if tile.neighbor_mines_count > 0 or tile.is_mine:
 		return
 	for neighbor in get_neighbor_list(tile.x, tile.y):
 		if not neighbor.is_revealed:
 			neighbor.reveal()
-			reveal_neighbors(neighbor)
+			try_reveal_neighbors(neighbor)
 			
 func _on_tile_revealed(tile):
 	if tile.is_mine:
 		print("Game Over!")
 
-	reveal_neighbors(tile)
+	try_reveal_neighbors(tile)
 			
