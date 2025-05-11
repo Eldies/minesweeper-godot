@@ -4,6 +4,7 @@ signal revealed
 
 var x: int
 var y: int
+var main_script: Node = null
 
 var is_mine: bool = false
 var neighbor_mines_count: int = 0
@@ -42,3 +43,4 @@ func toggle_flag():
 	is_flagged = not is_flagged
 	text = "F" if is_flagged else ""
 	
+	main_script.update_mine_counter()

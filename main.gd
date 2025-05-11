@@ -8,12 +8,15 @@ extends Node2D
 @onready var tile_scene = preload("res://tile.tscn")
 @onready var grid = $BoardContainer/TileGrid
 
+@onready var mine_counter = $MineCounter
+
 var tiles = []
 
 func _ready():
 	create_board()
 	place_mines()
 	calculate_neighbors()
+	update_mine_counter()
 	
 func create_board():
 	tiles.clear()
@@ -27,6 +30,7 @@ func create_board():
 			var tile = tile_scene.instantiate()
 			tile.x = x
 			tile.y = y
+			tile.main_script = self
 			grid.add_child(tile)
 			tile.connect("revealed", Callable(self, "_on_tile_revealed"))
 			tiles.append(tile)
@@ -60,16 +64,22 @@ func calculate_neighbors():
 		tiles[i].neighbor_mines_count = neighbor_mines.size()
 			
 func try_reveal_neighbors(tile):
-	if tile.neighbor_mines_count > 0 or tile.is_mine:
+	if tile.neighbor_mines_count > 0:
 		return
 	for neighbor in get_neighbor_list(tile.x, tile.y):
 		if not neighbor.is_revealed:
+			if neighbor.is_flagged:
+				neighbor.toggle_flag()
 			neighbor.reveal()
 			try_reveal_neighbors(neighbor)
 			
 func _on_tile_revealed(tile):
 	if tile.is_mine:
 		print("Game Over!")
-
-	try_reveal_neighbors(tile)
+	else:
+		try_reveal_neighbors(tile)
 			
+func update_mine_counter():
+	var flagged_tiles = tiles.filter(func(t): return t.is_flagged)
+	var remaining_mines = mine_count - flagged_tiles.size()
+	mine_counter.text = str(remaining_mines)
