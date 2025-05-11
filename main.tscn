@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cv2c34bu4pl8m"]
+[gd_scene load_steps=3 format=3 uid="uid://cv2c34bu4pl8m"]
 
 [ext_resource type="Script" uid="uid://bp8dpuhahmsqg" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://dfpkits5op105" path="res://board.gd" id="2_0xm2m"]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_ig7tw")
@@ -9,11 +10,12 @@ script = ExtResource("1_ig7tw")
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="TileGrid" type="GridContainer" parent="BoardContainer"]
+[node name="Board" type="GridContainer" parent="BoardContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 10
+script = ExtResource("2_0xm2m")
 
 [node name="MineCounter" type="Label" parent="."]
 offset_left = 553.0
