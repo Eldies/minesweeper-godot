@@ -1,6 +1,9 @@
 extends Node2D
 
-@export var grid_size: int = 10
+
+@export var grid_height: int = 10
+@export var grid_width: int = 5
+
 @export var mine_count: int = 10
 @onready var tile_scene = preload("res://tile.tscn")
 @onready var grid = $BoardContainer/TileGrid
@@ -17,9 +20,10 @@ func create_board():
 	
 	for child in grid.get_children():
 		child.queue_free()
+	grid.columns = grid_width
 	
-	for y in range(grid_size):
-		for x in range(grid_size):
+	for y in range(grid_height):
+		for x in range(grid_width):
 			var tile = tile_scene.instantiate()
 			grid.add_child(tile)
 			tile.connect("revealed", Callable(self, "_on_tile_revealed"))
@@ -32,11 +36,11 @@ func place_mines():
 		if i not in mine_positions:
 			mine_positions.append(i)
 			tiles[i].is_mine = true
-				
+
 func calculate_neighbors():
 	for i in range(tiles.size()):
-		var x = i % grid_size
-		var y = i / grid_size
+		var x = i % grid_width
+		var y = i / grid_width
 		var count = 0
 			
 		for dx in range(-1, 2):
@@ -45,8 +49,8 @@ func calculate_neighbors():
 					continue
 				var nx = x + dx
 				var ny = y + dy
-				if nx >= 0 and ny >= 0 and nx < grid_size and ny < grid_size:
-					var neighbor_index = ny * grid_size + nx
+				if nx >= 0 and ny >= 0 and nx < grid_width and ny < grid_height:
+					var neighbor_index = ny * grid_width + nx
 					if tiles[neighbor_index].is_mine:
 						count += 1
 		tiles[i].neighbor_mines_count = count
